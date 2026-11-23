@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../services/api_service.dart';
 import '../services/favorites_controller.dart';
 import '../services/favorites_storage.dart';
+import 'about_screen.dart';
 import 'favorites_screen.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
@@ -59,7 +60,20 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text(_titles[_selectedIndex])),
+      appBar: AppBar(
+        title: Text(_titles[_selectedIndex]),
+        actions: [
+          IconButton(
+            tooltip: 'About',
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => Navigator.of(context).push<void>(
+              MaterialPageRoute<void>(
+                builder: (context) => const AboutScreen(),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: IndexedStack(
         index: _selectedIndex,
         sizing: StackFit.expand,
