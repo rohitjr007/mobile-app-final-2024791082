@@ -136,7 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
         if (snapshot.hasError) {
           return Center(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -158,7 +158,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
         final meals = snapshot.requireData;
         if (meals.isEmpty) {
-          return const Center(child: Text('No recipes found'));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('No recipes found', textAlign: TextAlign.center),
+            ),
+          );
         }
 
         return ListView.separated(

@@ -71,7 +71,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titles[_selectedIndex]),
+        title: Text(
+          _titles[_selectedIndex],
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         actions: [
           if (changeDarkMode != null)
             Tooltip(
@@ -98,7 +102,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             ),
           IconButton(
             tooltip: 'About',
-            icon: const Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline, semanticLabel: 'About'),
             onPressed: () => Navigator.of(context).push<void>(
               MaterialPageRoute<void>(
                 builder: (context) => const AboutScreen(),

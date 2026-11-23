@@ -11,6 +11,14 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    return Tooltip(
+      message: category.name,
+      excludeFromSemantics: true,
+      child: MergeSemantics(child: _buildCard(theme)),
+    );
+  }
+
+  Widget _buildCard(ThemeData theme) {
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
@@ -39,7 +47,7 @@ class CategoryCard extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 child: Text(
                   category.name,
-                  style: theme.textTheme.titleMedium,
+                  style: theme.textTheme.titleMedium?.copyWith(height: 1.25),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

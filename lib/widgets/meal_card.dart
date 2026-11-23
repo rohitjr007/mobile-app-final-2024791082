@@ -23,24 +23,34 @@ class MealCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: SizedBox.square(
-            dimension: 56,
-            child: thumbnailUrl == null
-                ? placeholder
-                : Image.network(
-                    thumbnailUrl,
-                    fit: BoxFit.cover,
-                    excludeFromSemantics: true,
-                    errorBuilder: (context, error, stackTrace) => placeholder,
-                  ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox.square(
+                  dimension: 56,
+                  child: thumbnailUrl == null
+                      ? placeholder
+                      : Image.network(
+                          thumbnailUrl,
+                          fit: BoxFit.cover,
+                          excludeFromSemantics: true,
+                          errorBuilder: (context, error, stackTrace) =>
+                              placeholder,
+                        ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(meal.name, style: theme.textTheme.titleMedium),
+              ),
+            ],
           ),
         ),
-        title: Text(meal.name),
-        onTap: onTap,
       ),
     );
   }

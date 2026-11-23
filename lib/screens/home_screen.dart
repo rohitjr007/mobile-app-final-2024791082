@@ -51,6 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final labelSize = Theme.of(context).textTheme.titleMedium?.fontSize ?? 16;
+    final labelHeight =
+        MediaQuery.textScalerOf(context).scale(labelSize) * 1.25;
     final body = SafeArea(
       child: FutureBuilder<List<Category>>(
         future: _categories,
@@ -104,8 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  mainAxisExtent:
-                      126 + MediaQuery.textScalerOf(context).scale(18) * 2,
+                  mainAxisExtent: 124 + labelHeight * 2,
                 ),
                 itemCount: categories.length,
                 itemBuilder: (context, index) {

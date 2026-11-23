@@ -57,12 +57,14 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                   listenable: favorites,
                   builder: (context, child) {
                     final saved = favorites.mealIds.contains(widget.mealId);
+                    final label = saved
+                        ? 'Remove from favorites'
+                        : 'Add to favorites';
                     return IconButton(
-                      tooltip: saved
-                          ? 'Remove from favorites'
-                          : 'Add to favorites',
+                      tooltip: label,
                       icon: Icon(
                         saved ? Icons.favorite : Icons.favorite_border,
+                        semanticLabel: label,
                       ),
                       onPressed: favorites.canEdit
                           ? () => _toggleFavorite(favorites)
@@ -154,12 +156,18 @@ class _MealContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(meal.name, style: theme.textTheme.headlineMedium),
+            Semantics(
+              header: true,
+              child: Text(meal.name, style: theme.textTheme.headlineMedium),
+            ),
             const SizedBox(height: 8),
             Text('Category: ${meal.category ?? 'Not specified'}'),
             Text('Area: ${meal.area ?? 'Not specified'}'),
             const SizedBox(height: 24),
-            Text('Ingredients', style: theme.textTheme.titleLarge),
+            Semantics(
+              header: true,
+              child: Text('Ingredients', style: theme.textTheme.titleLarge),
+            ),
             const SizedBox(height: 8),
             if (meal.ingredients.isEmpty) const Text('No ingredients listed.'),
             for (final ingredient in meal.ingredients)
@@ -183,7 +191,10 @@ class _MealContent extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 24),
-            Text('Instructions', style: theme.textTheme.titleLarge),
+            Semantics(
+              header: true,
+              child: Text('Instructions', style: theme.textTheme.titleLarge),
+            ),
             const SizedBox(height: 8),
             Text(
               meal.instructions ?? 'No cooking instructions available.',

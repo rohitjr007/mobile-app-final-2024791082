@@ -16,11 +16,18 @@ class AboutScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text('Recipe Explorer', style: theme.textTheme.headlineMedium),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'Recipe Explorer',
+                    style: theme.textTheme.headlineMedium,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Browse recipe categories, search for meals, and save your favorites. '
                   'Recipes from TheMealDB include ingredients and cooking instructions.',
+                  style: theme.textTheme.bodyLarge?.copyWith(height: 1.5),
                 ),
                 const SizedBox(height: 24),
                 Card(
@@ -48,7 +55,7 @@ class AboutScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text('Student Photo'),
+                      Text('Student Photo', style: theme.textTheme.titleMedium),
                       const SizedBox(height: 12),
                       const ListTile(
                         title: Text('Student Name'),

@@ -56,7 +56,13 @@ class _MealListScreenState extends State<MealListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.categoryName)),
+      appBar: AppBar(
+        title: Text(
+          widget.categoryName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
       body: SafeArea(
         child: FutureBuilder<List<Meal>>(
           future: _meals,

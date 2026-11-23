@@ -31,23 +31,34 @@ class FavoritesScreen extends StatelessWidget {
           }
           if (favorites.loadFailed) {
             return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Could not load saved favorites.'),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: favorites.load,
-                    child: const Text('Retry'),
-                  ),
-                ],
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Could not load saved favorites.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: favorites.load,
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             );
           }
 
           final ids = favorites.mealIds;
           if (ids.isEmpty) {
-            return const Center(child: Text('No favorites yet.'));
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text('No favorites yet.', textAlign: TextAlign.center),
+              ),
+            );
           }
 
           return Center(
