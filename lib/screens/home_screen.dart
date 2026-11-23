@@ -6,9 +6,14 @@ import '../widgets/category_card.dart';
 import 'meal_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, this.apiService = const ApiService()});
+  const HomeScreen({
+    super.key,
+    this.apiService = const ApiService(),
+    this.embedded = false,
+  });
 
   final ApiService apiService;
+  final bool embedded;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -42,81 +47,81 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Recipe Explorer')),
-      body: SafeArea(
-        child: FutureBuilder<List<Category>>(
-          future: _categories,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: 'Loading recipe categories',
-                ),
-              );
-            }
+    final body = SafeArea(
+      child: FutureBuilder<List<Category>>(
+        future: _categories,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: 'Loading recipe categories',
+              ),
+            );
+          }
 
-            if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Could not load recipe categories.',
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
-                      FilledButton(
-                        onPressed: _retry,
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            final categories = snapshot.requireData;
-            if (categories.isEmpty) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Text(
-                    'No recipe categories are available.',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            }
-
+          if (snapshot.hasError) {
             return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 760),
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    mainAxisExtent:
-                        126 + MediaQuery.textScalerOf(context).scale(18) * 2,
-                  ),
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    final category = categories[index];
-                    return CategoryCard(
-                      category: category,
-                      onTap: () => _onCategoryTap(category),
-                    );
-                  },
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Could not load recipe categories.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    FilledButton(onPressed: _retry, child: const Text('Retry')),
+                  ],
                 ),
               ),
             );
-          },
-        ),
+          }
+
+          final categories = snapshot.requireData;
+          if (categories.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'No recipe categories are available.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 760),
+              child: GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  mainAxisExtent:
+                      126 + MediaQuery.textScalerOf(context).scale(18) * 2,
+                ),
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  return CategoryCard(
+                    category: category,
+                    onTap: () => _onCategoryTap(category),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
+    );
+    if (widget.embedded) return body;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Recipe Explorer')),
+      body: body,
     );
   }
 }

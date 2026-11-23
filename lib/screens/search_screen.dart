@@ -6,9 +6,14 @@ import '../widgets/meal_card.dart';
 import 'meal_detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, this.apiService = const ApiService()});
+  const SearchScreen({
+    super.key,
+    this.apiService = const ApiService(),
+    this.embedded = false,
+  });
 
   final ApiService apiService;
+  final bool embedded;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -59,39 +64,42 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Search recipes')),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 760),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: TextField(
-                    controller: _controller,
-                    onChanged: _onQueryChanged,
-                    onSubmitted: _search,
-                    textInputAction: TextInputAction.search,
-                    decoration: InputDecoration(
-                      labelText: 'Meal name',
-                      hintText: 'For example, chicken',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        tooltip: 'Search',
-                        onPressed: () => _search(_controller.text),
-                        icon: const Icon(Icons.search),
-                      ),
+    final body = SafeArea(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextField(
+                  controller: _controller,
+                  onChanged: _onQueryChanged,
+                  onSubmitted: _search,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    labelText: 'Meal name',
+                    hintText: 'For example, chicken',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      tooltip: 'Search',
+                      onPressed: () => _search(_controller.text),
+                      icon: const Icon(Icons.search),
                     ),
                   ),
                 ),
-                Expanded(child: _buildResults()),
-              ],
-            ),
+              ),
+              Expanded(child: _buildResults()),
+            ],
           ),
         ),
       ),
+    );
+    if (widget.embedded) return body;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Search recipes')),
+      body: body,
     );
   }
 
