@@ -19,6 +19,11 @@ class CategoryCard extends StatelessWidget {
   }
 
   Widget _buildCard(ThemeData theme) {
+    final thumbnailUrl = category.thumbnailUrl;
+    final placeholder = Icon(
+      Icons.restaurant_outlined,
+      color: theme.colorScheme.onSurfaceVariant,
+    );
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
@@ -31,15 +36,15 @@ class CategoryCard extends StatelessWidget {
                 child: ColoredBox(
                   color: theme.colorScheme.surfaceContainerHigh,
                   child: SizedBox.expand(
-                    child: Image.network(
-                      category.thumbnailUrl,
-                      fit: BoxFit.contain,
-                      excludeFromSemantics: true,
-                      errorBuilder: (context, error, stackTrace) => Icon(
-                        Icons.restaurant_outlined,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
+                    child: thumbnailUrl == null
+                        ? placeholder
+                        : Image.network(
+                            thumbnailUrl,
+                            fit: BoxFit.contain,
+                            excludeFromSemantics: true,
+                            errorBuilder: (context, error, stackTrace) =>
+                                placeholder,
+                          ),
                   ),
                 ),
               ),

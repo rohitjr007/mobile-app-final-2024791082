@@ -26,12 +26,19 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _meal = widget.apiService.fetchMealDetails(widget.mealId);
+    _meal = _fetchMeal();
+  }
+
+  Future<Meal?> _fetchMeal() {
+    final meal = widget.apiService.fetchMealDetails(widget.mealId);
+    // FutureBuilder subscribes during the next build.
+    meal.ignore();
+    return meal;
   }
 
   void _retry() {
     setState(() {
-      _meal = widget.apiService.fetchMealDetails(widget.mealId);
+      _meal = _fetchMeal();
     });
   }
 

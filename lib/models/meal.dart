@@ -22,6 +22,12 @@ class Meal {
   final List<({String name, String? measure})> ingredients;
 
   factory Meal.fromJson(Map<String, dynamic> json) {
+    final id = _optionalText(json['idMeal']);
+    final name = _optionalText(json['strMeal']);
+    if (id == null || name == null) {
+      throw const FormatException('Meal ID and name are required.');
+    }
+
     final ingredients = <({String name, String? measure})>[];
     for (var slot = 1; slot <= 20; slot++) {
       final name = _optionalText(json['strIngredient$slot']);
@@ -34,8 +40,8 @@ class Meal {
     }
 
     return Meal(
-      id: json['idMeal'] as String,
-      name: json['strMeal'] as String,
+      id: id,
+      name: name,
       thumbnailUrl: _optionalText(json['strMealThumb']),
       category: _optionalText(json['strCategory']),
       area: _optionalText(json['strArea']),
@@ -47,7 +53,8 @@ class Meal {
   }
 
   static String? _optionalText(Object? value) {
-    final text = (value as String?)?.trim();
-    return text == null || text.isEmpty ? null : text;
+    if (value is! String) return null;
+    final text = value.trim();
+    return text.isEmpty ? null : text;
   }
 }

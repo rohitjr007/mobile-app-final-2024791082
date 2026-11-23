@@ -15,10 +15,10 @@ class FavoritesController extends ChangeNotifier {
   List<String> get mealIds => _mealIds;
   bool get loading => _loading;
   bool get loadFailed => _loadFailed;
-  bool get canEdit => !_loading && !_loadFailed && !_saving;
+  bool get canEdit => !_disposed && !_loading && !_loadFailed && !_saving;
 
   Future<void> load() async {
-    if (_loading || _saving) return;
+    if (_disposed || _loading || _saving) return;
     _loading = true;
     _loadFailed = false;
     notifyListeners();

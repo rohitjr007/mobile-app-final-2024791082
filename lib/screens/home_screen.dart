@@ -28,12 +28,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _categories = widget.apiService.fetchCategories();
+    _categories = _fetchCategories();
+  }
+
+  Future<List<Category>> _fetchCategories() {
+    final categories = widget.apiService.fetchCategories();
+    // FutureBuilder subscribes during the next build.
+    categories.ignore();
+    return categories;
   }
 
   void _retry() {
     setState(() {
-      _categories = widget.apiService.fetchCategories();
+      _categories = _fetchCategories();
     });
   }
 

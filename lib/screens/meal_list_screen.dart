@@ -32,7 +32,10 @@ class _MealListScreenState extends State<MealListScreen> {
   }
 
   Future<List<Meal>> _fetchMeals() {
-    return widget.apiService.fetchMealsByCategory(widget.categoryName);
+    final meals = widget.apiService.fetchMealsByCategory(widget.categoryName);
+    // FutureBuilder subscribes during the next build.
+    meals.ignore();
+    return meals;
   }
 
   void _retry() {
