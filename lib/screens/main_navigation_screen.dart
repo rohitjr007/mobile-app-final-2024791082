@@ -9,9 +9,14 @@ import 'home_screen.dart';
 import 'search_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({super.key, this.apiService = const ApiService()});
+  const MainNavigationScreen({
+    super.key,
+    this.apiService = const ApiService(),
+    this.onDarkModeChanged,
+  });
 
   final ApiService apiService;
+  final Future<bool> Function(bool)? onDarkModeChanged;
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -45,6 +50,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkMode = Theme.of(context).brightness == Brightness.dark;
+    final changeDarkMode = widget.onDarkModeChanged;
+    final themeLabel = darkMode
+        ? 'Switch to light mode'
+        : 'Switch to dark mode';
     final tabs = [
       HomeScreen(
         apiService: widget.apiService,
@@ -63,6 +73,29 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       appBar: AppBar(
         title: Text(_titles[_selectedIndex]),
         actions: [
+          if (changeDarkMode != null)
+            Tooltip(
+              message: themeLabel,
+              excludeFromSemantics: true,
+              child: IconButton(
+                icon: Icon(
+                  darkMode
+                      ? Icons.light_mode_outlined
+                      : Icons.dark_mode_outlined,
+                  semanticLabel: themeLabel,
+                ),
+                onPressed: () async {
+                  if (await changeDarkMode(!darkMode) || !context.mounted) {
+                    return;
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Could not save the theme preference.'),
+                    ),
+                  );
+                },
+              ),
+            ),
           IconButton(
             tooltip: 'About',
             icon: const Icon(Icons.info_outline),
