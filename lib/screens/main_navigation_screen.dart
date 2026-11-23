@@ -1,6 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../services/api_service.dart';
+import '../services/favorites_controller.dart';
+import '../services/favorites_storage.dart';
+import 'favorites_screen.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
 
@@ -16,6 +19,19 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   static const _titles = ['Recipe Explorer', 'Search recipes', 'Favorites'];
   int _selectedIndex = 0;
+  late final FavoritesController _favorites;
+
+  @override
+  void initState() {
+    super.initState();
+    _favorites = FavoritesController(const FavoritesStorage())..load();
+  }
+
+  @override
+  void dispose() {
+    _favorites.dispose();
+    super.dispose();
+  }
 
   void _selectTab(int index) {
     if (index == _selectedIndex) return;
@@ -29,9 +45,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      HomeScreen(apiService: widget.apiService, embedded: true),
-      SearchScreen(apiService: widget.apiService, embedded: true),
-      const Center(child: Text('Favorites are coming soon.')),
+      HomeScreen(
+        apiService: widget.apiService,
+        favorites: _favorites,
+        embedded: true,
+      ),
+      SearchScreen(
+        apiService: widget.apiService,
+        favorites: _favorites,
+        embedded: true,
+      ),
+      FavoritesScreen(apiService: widget.apiService, favorites: _favorites),
     ];
 
     return Scaffold(

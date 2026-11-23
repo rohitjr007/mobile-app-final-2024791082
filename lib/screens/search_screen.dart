@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../models/meal.dart';
 import '../services/api_service.dart';
+import '../services/favorites_controller.dart';
 import '../widgets/meal_card.dart';
 import 'meal_detail_screen.dart';
 
@@ -9,10 +10,12 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({
     super.key,
     this.apiService = const ApiService(),
+    this.favorites,
     this.embedded = false,
   });
 
   final ApiService apiService;
+  final FavoritesController? favorites;
   final bool embedded;
 
   @override
@@ -56,8 +59,11 @@ class _SearchScreenState extends State<SearchScreen> {
   void _openMeal(String id) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) =>
-            MealDetailScreen(mealId: id, apiService: widget.apiService),
+        builder: (context) => MealDetailScreen(
+          mealId: id,
+          apiService: widget.apiService,
+          favorites: widget.favorites,
+        ),
       ),
     );
   }

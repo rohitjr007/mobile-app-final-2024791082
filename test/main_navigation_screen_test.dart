@@ -6,6 +6,7 @@ import 'package:recipe_explorer/screens/main_navigation_screen.dart';
 import 'package:recipe_explorer/services/api_service.dart';
 import 'package:recipe_explorer/widgets/category_card.dart';
 import 'package:recipe_explorer/widgets/meal_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const _salmon = Meal(id: '1', name: 'Grilled Salmon', thumbnailUrl: null);
 const _chicken = Meal(id: '2', name: 'Roast Chicken', thumbnailUrl: null);
@@ -70,7 +71,9 @@ Future<void> _goBack(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('switches among Home, Search, and the Favorites placeholder', (
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  testWidgets('switches among Home, Search, and the empty Favorites tab', (
     tester,
   ) async {
     final service = _FakeApiService();
@@ -88,7 +91,7 @@ void main() {
 
     await _selectTab(tester, 'Favorites');
     expect(find.widgetWithText(AppBar, 'Favorites'), findsOneWidget);
-    expect(find.text('Favorites are coming soon.'), findsOneWidget);
+    expect(find.text('No favorites yet.'), findsOneWidget);
     expect(find.byType(TextField).hitTestable(), findsNothing);
 
     await _selectTab(tester, 'Home');

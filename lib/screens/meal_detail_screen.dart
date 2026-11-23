@@ -2,16 +2,19 @@ import 'package:material_ui/material_ui.dart';
 
 import '../models/meal.dart';
 import '../services/api_service.dart';
+import '../services/favorites_controller.dart';
 
 class MealDetailScreen extends StatefulWidget {
   const MealDetailScreen({
     super.key,
     required this.mealId,
     this.apiService = const ApiService(),
+    this.favorites,
   });
 
   final String mealId;
   final ApiService apiService;
+  final FavoritesController? favorites;
 
   @override
   State<MealDetailScreen> createState() => _MealDetailScreenState();
@@ -32,53 +35,82 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
     });
   }
 
+  Future<void> _toggleFavorite(FavoritesController favorites) async {
+    if (await favorites.toggle(widget.mealId) || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Could not update favorites.')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Meal details')),
-      body: SafeArea(
-        child: FutureBuilder<Meal?>(
-          future: _meal,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: 'Loading meal details',
-                ),
-              );
-            }
-
-            if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Could not load meal details.',
-                        textAlign: TextAlign.center,
+    return FutureBuilder<Meal?>(
+      future: _meal,
+      builder: (context, snapshot) {
+        final favorites = widget.favorites;
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Meal details'),
+            actions: [
+              if (favorites != null && snapshot.hasData)
+                ListenableBuilder(
+                  listenable: favorites,
+                  builder: (context, child) {
+                    final saved = favorites.mealIds.contains(widget.mealId);
+                    return IconButton(
+                      tooltip: saved
+                          ? 'Remove from favorites'
+                          : 'Add to favorites',
+                      icon: Icon(
+                        saved ? Icons.favorite : Icons.favorite_border,
                       ),
-                      const SizedBox(height: 12),
-                      FilledButton(
-                        onPressed: _retry,
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  ),
+                      onPressed: favorites.canEdit
+                          ? () => _toggleFavorite(favorites)
+                          : null,
+                    );
+                  },
                 ),
-              );
-            }
-
-            final meal = snapshot.data;
-            if (meal == null) {
-              return const Center(child: Text('Meal not found.'));
-            }
-            return _MealContent(meal: meal);
-          },
-        ),
-      ),
+            ],
+          ),
+          body: SafeArea(child: _buildBody(snapshot)),
+        );
+      },
     );
+  }
+
+  Widget _buildBody(AsyncSnapshot<Meal?> snapshot) {
+    if (snapshot.connectionState != ConnectionState.done) {
+      return const Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: 'Loading meal details',
+        ),
+      );
+    }
+
+    if (snapshot.hasError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Could not load meal details.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              FilledButton(onPressed: _retry, child: const Text('Retry')),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final meal = snapshot.data;
+    if (meal == null) {
+      return const Center(child: Text('Meal not found.'));
+    }
+    return _MealContent(meal: meal);
   }
 }
 

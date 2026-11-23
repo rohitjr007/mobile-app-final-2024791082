@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../models/meal.dart';
 import '../services/api_service.dart';
+import '../services/favorites_controller.dart';
 import '../widgets/meal_card.dart';
 import 'meal_detail_screen.dart';
 
@@ -10,10 +11,12 @@ class MealListScreen extends StatefulWidget {
     super.key,
     required this.categoryName,
     this.apiService = const ApiService(),
+    this.favorites,
   });
 
   final String categoryName;
   final ApiService apiService;
+  final FavoritesController? favorites;
 
   @override
   State<MealListScreen> createState() => _MealListScreenState();
@@ -41,8 +44,11 @@ class _MealListScreenState extends State<MealListScreen> {
   void _onMealTap(String mealId) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) =>
-            MealDetailScreen(mealId: mealId, apiService: widget.apiService),
+        builder: (context) => MealDetailScreen(
+          mealId: mealId,
+          apiService: widget.apiService,
+          favorites: widget.favorites,
+        ),
       ),
     );
   }
