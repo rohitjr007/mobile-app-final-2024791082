@@ -73,44 +73,57 @@ Future<void> _goBack(WidgetTester tester) async {
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets(
-    'opens About, shows student placeholders, and returns to Search',
-    (tester) async {
-      await _openShell(tester, _FakeApiService());
-      await _selectTab(tester, 'Search');
-      await tester.enterText(find.byType(TextField), 'chicken');
-      await tester.testTextInput.receiveAction(TextInputAction.search);
-      await tester.pumpAndSettle();
+  testWidgets('opens About, shows the student profile, and returns to Search', (
+    tester,
+  ) async {
+    await _openShell(tester, _FakeApiService());
+    await _selectTab(tester, 'Search');
+    await tester.enterText(find.byType(TextField), 'chicken');
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+    await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('About'));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('About'));
+    await tester.pumpAndSettle();
 
-      expect(find.widgetWithText(AppBar, 'About'), findsOneWidget);
-      expect(find.text('Recipe Explorer'), findsOneWidget);
-      expect(find.textContaining('Recipes from TheMealDB'), findsOneWidget);
-      expect(find.byType(ListView), findsOneWidget);
-      expect(find.byType(NavigationBar), findsNothing);
-      for (final label in ['Student Name', 'Student ID', 'Student Photo']) {
-        expect(find.widgetWithText(ListTile, label), findsOneWidget);
-      }
-      expect(find.text('Student name placeholder'), findsOneWidget);
-      expect(find.text('Student ID placeholder'), findsOneWidget);
-      expect(find.text('Student photo placeholder'), findsOneWidget);
-
-      await _goBack(tester);
-
-      expect(find.widgetWithText(AppBar, 'Search recipes'), findsOneWidget);
+    expect(find.widgetWithText(AppBar, 'About'), findsOneWidget);
+    expect(find.text('Recipe Explorer'), findsOneWidget);
+    expect(find.textContaining('Recipes from TheMealDB'), findsOneWidget);
+    expect(find.byType(ListView), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    const details = {
+      'Student Name': 'Sarina Karki',
+      'Student ID': '2024791082',
+    };
+    for (final detail in details.entries) {
+      final tile = find.widgetWithText(ListTile, detail.key);
       expect(
-        find.widgetWithText(MealCard, _chicken.name).hitTestable(),
+        find.descendant(of: tile, matching: find.text(detail.value)),
         findsOneWidget,
       );
-      final navigation = tester.widget<NavigationBar>(
-        find.byType(NavigationBar),
-      );
-      expect(navigation.selectedIndex, 1);
-      expect(navigation.destinations, hasLength(3));
-    },
-  );
+    }
+    expect(find.text('Student Photo'), findsOneWidget);
+    final photo = find.descendant(
+      of: find.byType(ClipOval),
+      matching: find.byType(Image),
+    );
+    final image = tester.widget<Image>(photo);
+    expect(
+      (image.image as AssetImage).assetName,
+      'assets/images/student_photo.jpeg',
+    );
+    expect(image.fit, BoxFit.cover);
+
+    await _goBack(tester);
+
+    expect(find.widgetWithText(AppBar, 'Search recipes'), findsOneWidget);
+    expect(
+      find.widgetWithText(MealCard, _chicken.name).hitTestable(),
+      findsOneWidget,
+    );
+    final navigation = tester.widget<NavigationBar>(find.byType(NavigationBar));
+    expect(navigation.selectedIndex, 1);
+    expect(navigation.destinations, hasLength(3));
+  });
 
   testWidgets('switches among Home, Search, and the empty Favorites tab', (
     tester,

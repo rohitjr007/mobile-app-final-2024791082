@@ -23,22 +23,40 @@ class AboutScreen extends StatelessWidget {
                   'Recipes from TheMealDB include ingredients and cooking instructions.',
                 ),
                 const SizedBox(height: 24),
-                const Card(
+                Card(
                   margin: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      ListTile(
+                      const SizedBox(height: 20),
+                      ClipOval(
+                        child: SizedBox.square(
+                          dimension: 104,
+                          child: Image.asset(
+                            'assets/images/student_photo.jpeg',
+                            fit: BoxFit.cover,
+                            excludeFromSemantics: true,
+                            errorBuilder: (context, error, stackTrace) =>
+                                ColoredBox(
+                                  color: theme.colorScheme.surfaceContainerHigh,
+                                  child: Icon(
+                                    Icons.person_outline,
+                                    size: 48,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text('Student Photo'),
+                      const SizedBox(height: 12),
+                      const ListTile(
                         title: Text('Student Name'),
-                        subtitle: Text('Student name placeholder'),
+                        subtitle: Text('Sarina Karki'),
                       ),
-                      ListTile(
+                      const ListTile(
                         title: Text('Student ID'),
-                        subtitle: Text('Student ID placeholder'),
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.person_outline),
-                        title: Text('Student Photo'),
-                        subtitle: Text('Student photo placeholder'),
+                        subtitle: Text('2024791082'),
                       ),
                     ],
                   ),
